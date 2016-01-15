@@ -1,0 +1,219 @@
+﻿<Window x:Class="DQ6SaveDataEditor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="スマホ版ドラゴンクエスト6セーブデータエディタ" Width="750" Height="600">
+	<Window.Resources>
+		<Style TargetType="TextBox">
+			<Setter Property="HorizontalContentAlignment" Value="Center"/>
+			<Setter Property="Margin" Value="3"/>
+		</Style>
+	</Window.Resources>
+    <DockPanel>
+		<DockPanel DockPanel.Dock="Top">
+			<Button DockPanel.Dock="Left" Margin="3" Click="cmdLoadData">データを開く</Button>
+			<Button DockPanel.Dock="Right" Margin="3" Click="cmdSaveData">上書き保存</Button>
+			<Button DockPanel.Dock="Right" Margin="3" Click="cmdOutputData" ToolTip="セーブデータの各バイトを0x05でXORした値を書き出します(初期データに対して実施すること)">キーの更新</Button>
+			<StackPanel DockPanel.Dock="Right" Orientation="Horizontal" ToolTip="差分が0でない状態で保存してしまうと、冒険の書が壊れますよ！">
+				<Label FontSize="16">差分</Label>
+				<TextBox Width="70" Name="txtDelta" HorizontalContentAlignment="Right" FontSize="16"></TextBox>
+				<Button Click="cmdClear" Margin="3">変更を破棄</Button>
+			</StackPanel>
+			<TextBox IsReadOnly="True" Name="txtDataFilename" HorizontalContentAlignment="Left" VerticalContentAlignment="Center"/>
+		</DockPanel>
+		<TabControl>
+			<TabItem Header="所持金、袋">
+				<DockPanel>
+					<StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+						<Label Content="所持金"/>
+						<TextBox Name="txtMoney" IsReadOnly="True" Width="100" HorizontalContentAlignment="Right"/>
+						<Label Content="G"/>
+					</StackPanel>
+					<ListView Name="lstData" AlternationCount="2">
+						<ListView.ItemContainerStyle>
+							<Style TargetType="ListViewItem">
+								<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+								<Style.Triggers>
+									<Trigger Property="ListBox.AlternationIndex" Value="0">
+										<Setter Property="Background" Value="AliceBlue"/>
+									</Trigger>
+								</Style.Triggers>
+							</Style>
+						</ListView.ItemContainerStyle>
+						<ListView.View>
+							<GridView>
+								<GridViewColumn Header="名称" Width="150">
+									<GridViewColumn.CellTemplate>
+										<DataTemplate>
+											<TextBlock Text="{Binding Title}" ToolTip="{Binding PosHex}"/>
+										</DataTemplate>
+									</GridViewColumn.CellTemplate>
+								</GridViewColumn>
+								<GridViewColumn Header="初期値" Width="80">
+									<GridViewColumn.CellTemplate>
+										<DataTemplate>
+											<TextBlock Text="{Binding Value0}" TextAlignment="Right"/>
+										</DataTemplate>
+									</GridViewColumn.CellTemplate>
+								</GridViewColumn>
+								<GridViewColumn Header="値">
+									<GridViewColumn.CellTemplate>
+										<DataTemplate>
+											<StackPanel Orientation="Horizontal">
+												<TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" HorizontalContentAlignment="Right" Width="80"/>
+												<Button Margin="1" ToolTip="差分が0に近づくように値を適当に増減します" Click="cmdAdjustDiff" Tag="{Binding}">調整</Button>
+											</StackPanel>
+										</DataTemplate>
+									</GridViewColumn.CellTemplate>
+								</GridViewColumn>
+								<GridViewColumn Header="説明" DisplayMemberBinding="{Binding Text}" Width="200"/>
+								<GridViewColumn Header="削除">
+									<GridViewColumn.CellTemplate>
+										<DataTemplate>
+											<Button Visibility="{Binding DeleteButtonVisibility}"
+												ToolTip="このアイテムを削除して以降のアイテムをつめます"
+												Content="削除"
+												Click="cmdDeleteItem_Click" Tag="{Binding Pos}"/>
+										</DataTemplate>
+									</GridViewColumn.CellTemplate>
+								</GridViewColumn>
+							</GridView>
+						</ListView.View>
+					</ListView>
+				</DockPanel>
+			</TabItem>
+			<TabItem Header="仲間、モンスター(未調査)">
+				<DockPanel>
+					<StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+						<Label VerticalAlignment="Center">スクロールTo:</Label>
+						<ComboBox Name="cmbMonsters"
+								  Width="200"
+								  HorizontalAlignment="Left"
+								  Margin="3"
+								  VerticalContentAlignment="Center"
+								  SelectionChanged="cmbMonsters_SelectionChanged"/>
+						<Label VerticalAlignment="Center">一般モンスターは018以降</Label>
+					</StackPanel>
+					<ListView Name="lstMonsters" AlternationCount="2">
+						<ListView.ItemContainerStyle>
+							<Style TargetType="ListViewItem">
+								<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+								<Style.Triggers>
+									<Trigger Property="ListBox.AlternationIndex" Value="0">
+										<Setter Property="Background" Value="AliceBlue"/>
+									</Trigger>
+								</Style.Triggers>
+							</Style>
+						</ListView.ItemContainerStyle>
+						<ListView.View>
+							<GridView>
+								<GridViewColumn Header="名称" Width="150">
+									<GridViewColumn.CellTemplate>
+										<DataTemplate>
+											<TextBlock Text="{Binding Title}" ToolTip="{Binding PosHex}"/>
+										</DataTemplate>
+									</GridViewColumn.CellTemplate>
+								</GridViewColumn>
+								<GridViewColumn Header="初期値" Width="80">
+									<GridViewColumn.CellTemplate>
+										<DataTemplate>
+											<TextBlock Text="{Binding Value0}" TextAlignment="Right"/>
+										</DataTemplate>
+									</GridViewColumn.CellTemplate>
+								</GridViewColumn>
+								<GridViewColumn Header="値">
+									<GridViewColumn.CellTemplate>
+										<DataTemplate>
+											<StackPanel Orientation="Horizontal">
+												<TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" HorizontalContentAlignment="Right" Width="80"/>
+												<Button Margin="1" ToolTip="差分が0に近づくように値を適当に増減します" Click="cmdAdjustDiff" Tag="{Binding}">調整</Button>
+											</StackPanel>
+										</DataTemplate>
+									</GridViewColumn.CellTemplate>
+								</GridViewColumn>
+								<GridViewColumn Header="説明">
+									<GridViewColumn.CellTemplate>
+										<DataTemplate>
+											<StackPanel Orientation="Horizontal">
+												<TextBlock Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" Width="200"/>
+												<StackPanel Orientation="Horizontal" Visibility="{Binding NameEditorVisibility}">
+													<TextBox Text="{Binding EditedName, UpdateSourceTrigger=PropertyChanged}"
+															 Width="120" HorizontalContentAlignment="Left"
+															 ToolTip="たぶん、ひらがなorカタカナを4文字まで入力可能"/>
+													<Button Click="cmdUpdateName_Click" Tag="{Binding}" Content="名前を更新"/>
+												</StackPanel>
+											</StackPanel>
+										</DataTemplate>
+									</GridViewColumn.CellTemplate>
+								</GridViewColumn>
+							</GridView>
+						</ListView.View>
+					</ListView>
+				</DockPanel>
+			</TabItem>
+			<TabItem Header="解析用">
+				<DockPanel>
+					<StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+						<TextBox Name="txtFrom" Width="60" ToolTip="16進として解釈" HorizontalContentAlignment="Right"/>
+						<Label>から</Label>
+						<TextBox Name="txtTo" Width="60" ToolTip="16進として解釈" HorizontalContentAlignment="Right"/>
+						<Label>の値を</Label>
+						<TextBox Name="txtSize" Width="30" HorizontalContentAlignment="Right">1</TextBox>
+						<Label>バイト区切りで</Label>
+						<Button Margin="3" Click="cmdDispData_Click">表示してみる</Button>
+					</StackPanel>
+					<StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+						<TextBox Name="txtLower" Width="60" ToolTip="10進として解釈" HorizontalContentAlignment="Right"/>
+						<Label>から</Label>
+						<TextBox Name="txtUpper" Width="60" ToolTip="10進として解釈" HorizontalContentAlignment="Right"/>
+						<Label>の範囲の値のみを</Label>
+						<Button Margin="3" Click="cmdFilter_Click">表示してみる</Button>
+					</StackPanel>
+					<ListView Name="lstDebug" AlternationCount="2">
+						<ListView.ItemContainerStyle>
+							<Style TargetType="ListViewItem">
+								<Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+								<Setter Property="Visibility" Value="{Binding Visibility}"/>
+								<Style.Triggers>
+										<Trigger Property="ListBox.AlternationIndex" Value="0">
+											<Setter Property="Background" Value="AliceBlue"/>
+										</Trigger>
+								</Style.Triggers>
+							</Style>
+						</ListView.ItemContainerStyle>
+						<ListView.View>
+							<GridView>
+								<GridViewColumn Header="名称" Width="150">
+									<GridViewColumn.CellTemplate>
+										<DataTemplate>
+											<TextBlock Text="{Binding Title}" ToolTip="{Binding PosHex}"/>
+										</DataTemplate>
+									</GridViewColumn.CellTemplate>
+								</GridViewColumn>
+								<GridViewColumn Header="初期値" Width="80">
+									<GridViewColumn.CellTemplate>
+										<DataTemplate>
+											<TextBlock Text="{Binding Value0}" TextAlignment="Right"/>
+										</DataTemplate>
+									</GridViewColumn.CellTemplate>
+								</GridViewColumn>
+								<GridViewColumn Header="値">
+									<GridViewColumn.CellTemplate>
+										<DataTemplate>
+											<StackPanel Orientation="Horizontal">
+												<TextBox Text="{Binding Value, UpdateSourceTrigger=PropertyChanged}" HorizontalContentAlignment="Right" Width="80"/>
+												<Button Margin="1" ToolTip="差分が0に近づくように値を適当に増減します" Click="cmdAdjustDiff" Tag="{Binding}">調整</Button>
+											</StackPanel>
+										</DataTemplate>
+									</GridViewColumn.CellTemplate>
+								</GridViewColumn>
+								<GridViewColumn Header="確定" DisplayMemberBinding="{Binding Text}" Width="150"/>
+							</GridView>
+						</ListView.View>
+					</ListView>
+				</DockPanel>
+			</TabItem>
+		</TabControl>
+	</DockPanel>
+</Window>
+
+	
