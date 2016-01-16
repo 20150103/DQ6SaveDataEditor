@@ -340,16 +340,19 @@ namespace DQ6SaveDataEditor
 		/// </summary>
 		const int MONSTER_DATA_SIZE = 0xf4;
 
-		const int OFFSET_M_EXP = 0;						// 経験値
+		const int OFFSET_M_EXP = 0;							// 経験値
 
-		const int OFFSET_M_CUR_HP = 4;					// 現在HP、以降ここからのオフセット
-		const int OFFSET_M_MAX_HP = OFFSET_M_CUR_HP + 2;
-		const int OFFSET_M_CUR_MP = OFFSET_M_CUR_HP + 6;
-		const int OFFSET_M_MAX_MP = OFFSET_M_CUR_HP + 8;
+		const int OFFSET_M_CUR_HP = 4;						// 現在HP
+		const int OFFSET_M_MAX_HP = OFFSET_M_CUR_HP + 2;	// 最大HP
+		const int OFFSET_M_BASE_HP = OFFSET_M_CUR_HP + 4;	// 基本HP
 
-		const int OFFSET_M_TYPE = OFFSET_M_CUR_HP + 12;	// 種別?
-		const int OFFSET_M_RACE = OFFSET_M_CUR_HP + 38;	// 人間?(0=人間、1=モンスター?)
-		const int OFFSET_M_FACE = OFFSET_M_CUR_HP + 39;	// 画像?
+		const int OFFSET_M_CUR_MP = OFFSET_M_CUR_HP + 6;	// 現在MP
+		const int OFFSET_M_MAX_MP = OFFSET_M_CUR_HP + 8;	// 最大MP
+		const int OFFSET_M_BASE_MP = OFFSET_M_CUR_HP + 10;	// 基本MP
+
+		const int OFFSET_M_TYPE = OFFSET_M_CUR_HP + 12;		// 種別?
+		const int OFFSET_M_RACE = OFFSET_M_CUR_HP + 38;		// 人間?(0=人間、1=モンスター?)
+		const int OFFSET_M_FACE = OFFSET_M_CUR_HP + 39;		// 画像?
 
 		const int OFFSET_M_NAME1 = OFFSET_M_CUR_HP + 40;	// 名前1文字目
 		const int OFFSET_M_NAME2 = OFFSET_M_CUR_HP + 43;	// 名前2文字目
@@ -671,6 +674,14 @@ namespace DQ6SaveDataEditor
 				allItems.Add(item);
 
 				item = new CData();
+				item.Title = "{0:D3}の基本HP".FormatEx(i + 1);
+				item.Size = 2;
+				item.Pos = pos_head + OFFSET_M_BASE_HP;
+
+				Monsters.Add(item);
+				allItems.Add(item);
+
+				item = new CData();
 				item.Title = "{0:D3}の現在MP".FormatEx(i + 1);
 				item.Size = 2;
 				item.Pos = pos_head + OFFSET_M_CUR_MP;
@@ -682,6 +693,14 @@ namespace DQ6SaveDataEditor
 				item.Title = "{0:D3}の最大MP".FormatEx(i + 1);
 				item.Size = 2;
 				item.Pos = pos_head + OFFSET_M_MAX_MP;
+
+				Monsters.Add(item);
+				allItems.Add(item);
+
+				item = new CData();
+				item.Title = "{0:D3}の基本MP".FormatEx(i + 1);
+				item.Size = 2;
+				item.Pos = pos_head + OFFSET_M_BASE_MP;
 
 				Monsters.Add(item);
 				allItems.Add(item);
