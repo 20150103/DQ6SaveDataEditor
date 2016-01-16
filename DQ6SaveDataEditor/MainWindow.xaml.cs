@@ -359,13 +359,37 @@ namespace DQ6SaveDataEditor
 		const int OFFSET_M_NAME3 = OFFSET_M_CUR_HP + 46;	// 名前3文字目
 		const int OFFSET_M_NAME4 = OFFSET_M_CUR_HP + 49;	// 名前4文字目
 
-		const int OFFSET_M_STR = OFFSET_M_CUR_HP + 68;	// ちから
-		const int OFFSET_M_DEF = OFFSET_M_CUR_HP + 70;	// みのまもり
-		const int OFFSET_M_AGI = OFFSET_M_CUR_HP + 72;	// すばやさ
-		const int OFFSET_M_WIT = OFFSET_M_CUR_HP + 74;	// かしこさ
-		const int OFFSET_M_LUC = OFFSET_M_CUR_HP + 76;	// かっこよさ
+		const int OFFSET_M_STR = OFFSET_M_CUR_HP + 68;		// ちから
+		const int OFFSET_M_DEF = OFFSET_M_CUR_HP + 70;		// みのまもり
+		const int OFFSET_M_AGI = OFFSET_M_CUR_HP + 72;		// すばやさ
+		const int OFFSET_M_WIT = OFFSET_M_CUR_HP + 74;		// かしこさ
+		const int OFFSET_M_LUC = OFFSET_M_CUR_HP + 76;		// かっこよさ
 
-		const int OFFSET_M_LV = OFFSET_M_CUR_HP + 78;	// レベル
+		const int OFFSET_M_LV = OFFSET_M_CUR_HP + 78;		// レベル
+
+		const int OFFSET_JYUKUREN_BASE = OFFSET_M_CUR_HP + 194;	// 熟練度の起点
+
+		static readonly string[] JOB_NAMES = new string[]
+		{
+			"戦士",
+			"武闘家",
+			"魔法使い",
+			"僧侶",
+			"踊り子",
+			"盗賊",
+			"魔物マスター",
+			"商人",
+			"遊び人",
+			"バトルマスター",
+			"魔法戦士",
+			"パラディン",
+			"賢者",
+			"レンジャー",
+			"スーパースター",
+			"勇者",
+			"ドラゴン",
+			"はぐれメタル",
+		};
 
 		#endregion
 
@@ -744,6 +768,18 @@ namespace DQ6SaveDataEditor
 
 				Monsters.Add(item);
 				allItems.Add(item);
+
+				// 各職業の熟練度
+				for (var j = 0; j < JOB_NAMES.Length; j++)
+				{
+					item = new CData();
+					item.Title = "{0:D3}の熟練度({1})".FormatEx(i + 1, JOB_NAMES[j]);
+					item.Size = 2;
+					item.Pos = pos_head + OFFSET_JYUKUREN_BASE + j * 2;
+
+					Monsters.Add(item);
+					allItems.Add(item);
+				}
 			}
 
 			#endregion
