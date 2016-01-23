@@ -367,7 +367,8 @@ namespace DQ6SaveDataEditor
 
 		const int OFFSET_M_LV = OFFSET_M_CUR_HP + 78;		// レベル
 
-		const int OFFSET_JYUKUREN_BASE = OFFSET_M_CUR_HP + 194;	// 熟練度の起点
+		const int OFFSET_JOBSTAR_BASE = OFFSET_M_CUR_HP + 173;	// 熟練度(★)の起点
+		const int OFFSET_JYUKUREN_BASE = OFFSET_M_CUR_HP + 194;	// 熟練度(経験値)の起点
 
 		static readonly string[] JOB_NAMES = new string[]
 		{
@@ -773,7 +774,15 @@ namespace DQ6SaveDataEditor
 				for (var j = 0; j < JOB_NAMES.Length; j++)
 				{
 					item = new CData();
-					item.Title = "{0:D3}の熟練度({1})".FormatEx(i + 1, JOB_NAMES[j]);
+					item.Title = "{0:D3}の熟練度({1}) ★".FormatEx(i + 1, JOB_NAMES[j]);
+					item.Size = 1;
+					item.Pos = pos_head + OFFSET_JOBSTAR_BASE + j;
+
+					Monsters.Add(item);
+					allItems.Add(item);
+
+					item = new CData();
+					item.Title = "{0:D3}の熟練度({1}) 経験値".FormatEx(i + 1, JOB_NAMES[j]);
 					item.Size = 2;
 					item.Pos = pos_head + OFFSET_JYUKUREN_BASE + j * 2;
 
